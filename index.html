@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geekonomist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:   #7174B4;
+    --soft:   #ABABD5;
+    --cream:  #FCEEC8;
+    --pink:   #EFB7AF;
+    --ink:    #1a1928;
+    --muted:  #6b6c9a;
+    --border: rgba(113,116,180,0.15);
+    --bg:     #f8f6f2;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── PAGES ─────────────────────────────── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ─── NAV ────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 52px;
+    background: rgba(248,246,242,0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+    color: var(--ink); text-decoration: none;
+  }
+
+  .nav-back {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.04em;
+    color: var(--muted); text-decoration: none;
+    cursor: pointer; transition: color 0.2s;
+    display: none;
+  }
+
+  .nav-back:hover { color: var(--ink); }
+  .nav-back.visible { display: block; }
+
+  /* ─── ARCHIVE PAGE ───────────────────────── */
+  .hero {
+    background: var(--ink);
+    padding: 160px 52px 80px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-glow-1 {
+    position: absolute; width: 700px; height: 700px;
+    top: -300px; right: -150px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(113,116,180,0.22) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-glow-2 {
+    position: absolute; width: 400px; height: 400px;
+    bottom: -100px; left: 80px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(239,183,175,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 8vw, 120px);
+    font-weight: 900; line-height: 0.9; letter-spacing: -4px;
+    color: var(--cream); position: relative; z-index: 1;
+    opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+
+  .hero-title em { font-style: italic; color: var(--pink); }
+
+  .filters {
+    padding: 20px 52px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky; top: 61px; z-index: 50;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .filter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.04em;
+    color: var(--muted); flex-shrink: 0;
+  }
+
+  .dropdown { position: relative; }
+
+  .dd-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 14px;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.04em;
+    color: var(--ink); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+
+  .dd-btn:hover, .dropdown.open .dd-btn { border-color: var(--blue); color: var(--blue); }
+
+  .dd-arrow { font-size: 9px; opacity: 0.4; transition: transform 0.2s; }
+  .dropdown.open .dd-arrow { transform: rotate(180deg); }
+
+  .dd-menu {
+    display: none; position: absolute; top: calc(100% + 4px); left: 0;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; min-width: 200px; z-index: 200;
+    box-shadow: 0 8px 32px rgba(26,25,40,0.08); overflow: hidden;
+  }
+
+  .dropdown.open .dd-menu { display: block; }
+
+  .dd-item {
+    display: block; width: 100%; text-align: left;
+    padding: 10px 16px; background: transparent; border: none;
+    border-bottom: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.04em;
+    color: var(--muted); cursor: pointer; transition: all 0.15s;
+  }
+
+  .dd-item:last-child { border-bottom: none; }
+  .dd-item:hover { background: rgba(113,116,180,0.05); color: var(--blue); }
+  .dd-item.active { color: var(--blue); background: rgba(113,116,180,0.06); }
+
+  .filter-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+
+  .filter-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.04em;
+    color: rgba(107,108,154,0.35); margin-left: auto;
+  }
+
+  .archive { padding: 0 52px; }
+
+  .case-item {
+    display: grid; grid-template-columns: 52px 1fr auto;
+    gap: 36px; padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center; transition: background 0.18s;
+  }
+
+  .case-item:hover { background: rgba(113,116,180,0.04); margin: 0 -52px; padding-left: 52px; padding-right: 52px; }
+  .case-item:hover .ci-num { color: var(--blue); }
+  .case-item.hidden { display: none; }
+
+  .ci-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.04em;
+    color: var(--soft); transition: color 0.18s; align-self: center;
+  }
+
+  .ci-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 700;
+    line-height: 1.25; letter-spacing: -0.3px;
+  }
+
+  .ci-levels { display: flex; gap: 4px; flex-shrink: 0; }
+
+  .level-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border); border-radius: 6px;
+    background: transparent;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.04em;
+    color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+
+  .level-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(113,116,180,0.05); }
+  .level-btn.selected { border-color: var(--blue); color: var(--blue); background: rgba(113,116,180,0.1); }
+
+  .archive-empty {
+    padding: 80px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.04em;
+    color: var(--muted); opacity: 0.4; display: none;
+  }
+
+  /* ─── CASE PAGE ──────────────────────────── */
+  .case-header {
+    background: var(--ink);
+    padding: 140px 52px 80px;
+    position: relative; overflow: hidden;
+    min-height: 420px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+
+  .ch-ghost-num {
+    position: absolute; right: -20px; top: -40px;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(200px, 28vw, 400px);
+    font-weight: 900; font-style: italic;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(171,171,213,0.1);
+    line-height: 1; pointer-events: none; user-select: none; letter-spacing: -10px;
+  }
+
+  .ch-glow {
+    position: absolute; width: 700px; height: 700px;
+    top: -300px; left: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(113,116,180,0.15) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .ch-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em;
+    color: var(--soft); margin-bottom: 20px;
+    position: relative; z-index: 1;
+  }
+
+  .ch-tag::before { content: ''; display: block; width: 24px; height: 1px; background: var(--blue); }
+
+  .ch-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 54px);
+    font-weight: 900; line-height: 1.05; letter-spacing: -1.5px;
+    color: var(--cream); max-width: 740px;
+    position: relative; z-index: 1;
+  }
+
+  .ch-level-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 32px; font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.08em;
+    color: rgba(171,171,213,0.5);
+    position: relative; z-index: 1;
+  }
+
+  .level-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
+
+  .case-layout {
+    display: grid; grid-template-columns: 260px 1fr;
+  }
+
+  .case-sidebar {
+    position: sticky; top: 61px; height: calc(100vh - 61px);
+    padding: 48px 32px 48px 52px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto; background: var(--bg);
+  }
+
+  .sidebar-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em;
+    color: var(--soft); margin-bottom: 20px; display: block;
+  }
+
+  .sidebar-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.02em;
+    color: var(--muted); text-decoration: none;
+    padding: 7px 10px 7px 12px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s; display: block; line-height: 1.4;
+  }
+
+  .sidebar-link:hover { color: var(--blue); border-left-color: var(--border); }
+  .sidebar-link.active { color: var(--blue); border-left-color: var(--blue); background: rgba(113,116,180,0.05); }
+
+  .case-main { padding: 72px 72px 140px; }
+
+  .case-section { margin-bottom: 72px; scroll-margin-top: 96px; }
+
+  .s-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.18em;
+    color: var(--blue); display: flex; align-items: center; gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .s-label::after { content: ''; display: block; flex: 1; height: 1px; background: var(--border); }
+
+  .s-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px; line-height: 1.85; font-weight: 300; color: var(--ink);
+  }
+
+  .s-text + .s-text { margin-top: 16px; }
+
+  #scenario .s-text { padding-left: 20px; border-left: 2px solid rgba(113,116,180,0.3); }
+
+  .num-rows {
+    display: flex; flex-direction: column;
+    border-radius: 10px; overflow: hidden; border: 1px solid var(--border);
+  }
+
+  .num-row {
+    display: flex; align-items: baseline;
+    padding: 11px 16px; border-bottom: 1px dashed var(--border); gap: 16px;
+  }
+
+  .num-row:last-child { border-bottom: none; }
+
+  .num-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.08em; color: var(--soft);
+    min-width: 200px; flex-shrink: 0;
+  }
+
+  .num-val { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 300; color: var(--ink); }
+  .num-val.bad { color: var(--pink); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+
+  .q-list { list-style: none; }
+
+  .q-item { display: grid; grid-template-columns: 36px 1fr; gap: 0; padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .q-item:last-child { border-bottom: none; }
+
+  .q-n {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 900; font-style: italic;
+    color: rgba(113,116,180,0.2); line-height: 1.2; margin-top: -2px;
+  }
+
+  .q-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--ink); padding-top: 4px; }
+
+  .think-list { display: flex; flex-direction: column; gap: 0; position: relative; }
+  .think-list::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 12px; width: 1px; background: var(--border); }
+
+  .think-item { display: flex; gap: 20px; padding: 0 0 28px 0; }
+
+  .think-dot { width: 19px; height: 19px; border-radius: 50%; border: 1.5px solid var(--blue); background: var(--bg); flex-shrink: 0; margin-top: 2px; position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; }
+  .think-dot-inner { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+
+  .think-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.8; font-weight: 300; color: var(--ink); }
+
+  .lens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .lens-card { padding: 24px; background: rgba(113,116,180,0.04); border-top: 2px solid var(--blue); border-radius: 0 0 10px 10px; }
+  .lens-card p { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; line-height: 1.8; font-weight: 300; color: var(--ink); }
+
+  .role-strip {
+    background: var(--ink); padding: 24px 28px;
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 20px; border-radius: 12px;
+  }
+
+  .role-strip-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--soft); flex-shrink: 0; margin-top: 3px; opacity: 0.6; }
+  .role-strip p { font-family: 'Playfair Display', serif; font-size: 17px; font-style: italic; line-height: 1.55; color: var(--cream); }
+
+  .choices { display: flex; flex-direction: column; gap: 6px; }
+
+  .choice-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--border); border-radius: 8px; background: transparent;
+    cursor: pointer; text-align: left; transition: all 0.15s; width: 100%;
+    position: relative; overflow: hidden;
+  }
+
+  .choice-btn::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: rgba(113,116,180,0.06); transition: width 0.2s ease; }
+  .choice-btn:hover::before { width: 100%; }
+  .choice-btn:hover { border-color: rgba(113,116,180,0.35); }
+  .choice-btn.selected { border-color: var(--blue); background: var(--ink); }
+  .choice-btn.selected::before { display: none; }
+  .choice-btn.selected .choice-letter { color: var(--pink); }
+  .choice-btn.selected .choice-text { color: var(--cream); }
+  .choice-btn.dimmed { opacity: 0.18; pointer-events: none; }
+
+  .choice-letter { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; font-weight: 700; color: rgba(113,116,180,0.4); flex-shrink: 0; line-height: 1; margin-top: 1px; transition: color 0.15s; }
+  .choice-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.65; font-weight: 300; color: var(--ink); position: relative; z-index: 1; }
+
+  .step { display: none; }
+  .step.visible { display: block; animation: fadeUp 0.35s ease forwards; }
+
+  .step-divider { display: flex; align-items: center; gap: 16px; margin: 40px 0; }
+  .step-divider::before, .step-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .step-divider span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--soft); }
+
+  .reason-label { font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.6; font-weight: 300; color: var(--muted); margin-bottom: 14px; display: block; font-style: italic; }
+
+  .reason-textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.7; font-weight: 300; padding: 12px 0; resize: none; min-height: 72px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .reason-textarea:focus { border-bottom-color: var(--blue); }
+  .reason-textarea::placeholder { color: rgba(107,108,154,0.35); }
+  .reason-textarea:disabled { opacity: 0.4; }
+
+  .action-btn { margin-top: 16px; padding: 9px 22px; background: transparent; border: 1px solid var(--blue); border-radius: 6px; color: var(--blue); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; }
+  .action-btn:hover { background: var(--blue); color: white; }
+  .action-btn:disabled { opacity: 0.25; cursor: default; }
+
+  .arg-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 24px; }
+
+  .arg-col-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .arg-col-label::before { content: ''; display: block; width: 12px; height: 1.5px; }
+  .arg-cols .arg-col:first-child .arg-col-label::before { background: #7a9e87; }
+  .arg-cols .arg-col:last-child .arg-col-label::before { background: var(--pink); }
+  .arg-col p { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.75; font-weight: 300; color: var(--ink); }
+
+  .condition-strip { padding: 16px 0; border-top: 1px solid var(--border); }
+  .condition-strip-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; display: block; }
+  .condition-strip p { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.75; font-weight: 300; color: var(--muted); }
+
+  .apply-wrap { margin-top: 8px; }
+  .apply-question { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; font-weight: 700; line-height: 1.45; color: var(--blue); margin-bottom: 20px; }
+
+  .apply-textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.7; font-weight: 300; padding: 12px 0; resize: none; min-height: 72px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .apply-textarea:focus { border-bottom-color: var(--blue); }
+  .apply-textarea::placeholder { color: rgba(107,108,154,0.3); }
+  .apply-textarea:disabled { opacity: 0.4; }
+
+  .finish-btn { margin-top: 16px; padding: 9px 22px; background: transparent; border: 1px solid var(--pink); border-radius: 6px; color: var(--pink); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; }
+  .finish-btn:hover { background: var(--pink); color: var(--ink); }
+  .finish-btn:disabled { opacity: 0.25; cursor: default; }
+
+  .done-box { display: none; padding: 64px 0; text-align: center; }
+  .done-box.visible { display: block; animation: fadeUp 0.4s ease forwards; }
+
+  .done-quote { font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic; font-weight: 700; color: var(--blue); line-height: 1.5; margin-bottom: 28px; }
+
+  .done-link { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; transition: all 0.2s; cursor: pointer; }
+  .done-link:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ─── FOOTER ─────────────────────────────── */
+  footer {
+    background: var(--ink); color: var(--cream);
+    padding: 48px 52px 32px; margin-top: 80px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .f-logo { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); }
+  .f-copy { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.04em; color: rgba(252,238,200,0.18); }
+
+  /* ─── PAGE TRANSITION ────────────────────── */
+  .page { opacity: 1; transition: opacity 0.2s ease; }
+  .page.fading { opacity: 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <span class="nav-logo">Geekonomist</span>
+  <span class="nav-back" id="nav-back" onclick="goArchive()">← Archive</span>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     PAGE: ARCHIVE
+══════════════════════════════════════════ -->
+<div class="page active" id="page-archive">
+
+  <div class="hero">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+    <h1 class="hero-title">Geekonomist</h1>
+  </div>
+
+  <div class="filters">
+    <span class="filter-label">World</span>
+    <div class="dropdown" id="dd-world">
+      <button class="dd-btn" onclick="toggleDd('dd-world')">
+        <span id="dd-world-label">All</span><span class="dd-arrow">↓</span>
+      </button>
+      <div class="dd-menu">
+        <button class="dd-item active" data-world="all">All worlds</button>
+        <button class="dd-item" data-world="harry-potter">Harry Potter</button>
+        <button class="dd-item" data-world="dune">Dune</button>
+        <button class="dd-item" data-world="lotr">Lord of the Rings</button>
+        <button class="dd-item" data-world="star-wars">Star Wars</button>
+        <button class="dd-item" data-world="got">Game of Thrones</button>
+        <button class="dd-item" data-world="foundation">Foundation</button>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Tension</span>
+    <div class="dropdown" id="dd-tension">
+      <button class="dd-btn" onclick="toggleDd('dd-tension')">
+        <span id="dd-tension-label">All</span><span class="dd-arrow">↓</span>
+      </button>
+      <div class="dd-menu">
+        <button class="dd-item active" data-tension="all">All tensions</button>
+        <button class="dd-item" data-tension="succession">Succession</button>
+        <button class="dd-item" data-tension="leadership">Leadership</button>
+        <button class="dd-item" data-tension="team-design">Team design</button>
+        <button class="dd-item" data-tension="strategy">Strategy</button>
+        <button class="dd-item" data-tension="governance">Governance</button>
+        <button class="dd-item" data-tension="institutional">Institutional design</button>
+      </div>
+    </div>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Category</span>
+    <div class="dropdown" id="dd-category">
+      <button class="dd-btn" onclick="toggleDd('dd-category')">
+        <span id="dd-category-label">All</span><span class="dd-arrow">↓</span>
+      </button>
+      <div class="dd-menu">
+        <button class="dd-item active" data-category="all">All categories</button>
+        <button class="dd-item" data-category="hr">HR</button>
+        <button class="dd-item" data-category="management">Management</button>
+        <button class="dd-item" data-category="strategy">Strategy</button>
+        <button class="dd-item" data-category="leadership">Leadership</button>
+        <button class="dd-item" data-category="marketing">Marketing</button>
+        <button class="dd-item" data-category="organizational-design">Organizational design</button>
+      </div>
+    </div>
+    <span class="filter-count" id="filter-count">6 cases</span>
+  </div>
+
+  <div class="archive">
+    <div class="archive-empty" id="empty">No cases match this filter.</div>
+
+    <div class="case-item" data-world="harry-potter" data-tension="succession" data-category="hr">
+      <span class="ci-num">01</span>
+      <div class="ci-title">Did Voldemort Build a Sustainable Organization?</div>
+      <div class="ci-levels">
+        <button class="level-btn" onclick="openCase(this, 1, 'new')">New professional</button>
+        <button class="level-btn" onclick="openCase(this, 1, 'mid')">Mid-level</button>
+        <button class="level-btn" onclick="openCase(this, 1, 'senior')">Senior leader</button>
+      </div>
+    </div>
+
+    <div class="case-item" data-world="dune" data-tension="leadership" data-category="leadership">
+      <span class="ci-num">02</span>
+      <div class="ci-title">Did Duke Leto Leave House Atreides Without a Successor?</div>
+      <div class="ci-levels">
+        <button class="level-btn" onclick="openCase(this, 2, 'new')">New professional</button>
+        <button class="level-btn" onclick="openCase(this, 2, 'mid')">Mid-level</button>
+        <button class="level-btn" onclick="openCase(this, 2, 'senior')">Senior leader</button>
+      </div>
+    </div>
+
+    <div class="case-item" data-world="lotr" data-tension="team-design" data-category="management">
+      <span class="ci-num">03</span>
+      <div class="ci-title">Was the Fellowship Designed for the Mission It Actually Faced?</div>
+      <div class="ci-levels">
+        <button class="level-btn" onclick="openCase(this, 3, 'new')">New professional</button>
+        <button class="level-btn" onclick="openCase(this, 3, 'mid')">Mid-level</button>
+        <button class="level-btn" onclick="openCase(this, 3, 'senior')">Senior leader</button>
+      </div>
+    </div>
+
+    <div class="case-item" data-world="star-wars" data-tension="strategy" data-category="strategy">
+      <span class="ci-num">04</span>
+      <div class="ci-title">Was the Death Star a Strategic Asset or a Capital Allocation Failure?</div>
+      <div class="ci-levels">
+        <button class="level-btn" onclick="openCase(this, 4, 'new')">New professional</button>
+        <button class="level-btn" onclick="openCase(this, 4, 'mid')">Mid-level</button>
+        <button class="level-btn" onclick="openCase(this, 4, 'senior')">Senior leader</button>
+      </div>
+    </div>
+
+    <div class="case-item" data-world="got" data-tension="governance" data-category="organizational-design">
+      <span class="ci-num">05</span>
+      <div class="ci-title">Why Did the Night's Watch Fail as an Institution?</div>
+      <div class="ci-levels">
+        <button class="level-btn" onclick="openCase(this, 5, 'new')">New professional</button>
+        <button class="level-btn" onclick="openCase(this, 5, 'mid')">Mid-level</button>
+        <button class="level-btn" onclick="openCase(this, 5, 'senior')">Senior leader</button>
+      </div>
+    </div>
+
+    <div class="case-item" data-world="foundation" data-tension="institutional" data-category="organizational-design">
+      <span class="ci-num">06</span>
+      <div class="ci-title">Was Hari Seldon's Plan an Organizational Design or a Control Mechanism?</div>
+      <div class="ci-levels">
+        <button class="level-btn" onclick="openCase(this, 6, 'new')">New professional</button>
+        <button class="level-btn" onclick="openCase(this, 6, 'mid')">Mid-level</button>
+        <button class="level-btn" onclick="openCase(this, 6, 'senior')">Senior leader</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span class="f-logo">Geekonomist</span>
+    <span class="f-copy">© 2025 Geekonomist</span>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: CASE
+══════════════════════════════════════════ -->
+<div class="page" id="page-case">
+
+  <div class="case-header">
+    <div class="ch-glow"></div>
+    <div class="ch-ghost-num" id="ch-ghost-num">01</div>
+    <div class="ch-tag" id="ch-tag">Case #01 · Harry Potter · Succession</div>
+    <h1 class="ch-title" id="ch-title">Did Voldemort Build a Sustainable Organization?</h1>
+    <div class="ch-level-pill">
+      <span class="level-pip"></span>
+      <span id="ch-level-label">Mid-level manager</span>
+    </div>
+  </div>
+
+  <div class="case-layout">
+    <div class="case-sidebar">
+      <span class="sidebar-title">Contents</span>
+      <a href="#scenario"   class="sidebar-link" onclick="scrollTo('scenario')">The Scenario</a>
+      <a href="#background" class="sidebar-link" onclick="scrollTo('background')">The Background</a>
+      <a href="#evidence"   class="sidebar-link" onclick="scrollTo('evidence')">The Evidence</a>
+      <a href="#numbers"    class="sidebar-link" onclick="scrollTo('numbers')">The Numbers</a>
+      <a href="#tension"    class="sidebar-link" onclick="scrollTo('tension')">The Business Tension</a>
+      <a href="#discussion" class="sidebar-link" onclick="scrollTo('discussion')">For Group Discussion</a>
+      <a href="#think"      class="sidebar-link" onclick="scrollTo('think')">Think It Through</a>
+      <a href="#lens"       class="sidebar-link" onclick="scrollTo('lens')">Learning Lens</a>
+      <a href="#decision"   class="sidebar-link" onclick="scrollTo('decision')">Your Decision</a>
+    </div>
+
+    <div class="case-main" id="case-main-content">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CASE DATA ────────────────────────────────────────────────────────────────
+const cases = {
+  1: {
+    num: '01', world: 'Harry Potter', tension: 'Succession',
+    title: 'Did Voldemort Build a Sustainable Organization?',
+    scenario: ['1998 baharında Lord Voldemort, Sihir Bakanlığı\'nın çoğu kurumu üzerinde kontrol kurmuştu. Bakanlık onun etkisi altında işliyordu, Hogwarts Severus Snape tarafından yönetiliyordu ve hükümetin kilit pozisyonları sadık destekçilerle doldurulmuştu. Muhalefet grupları aktif ancak parçalıydı. Dışarıdan bakıldığında Death Eaters, tarihlerinin en güçlü noktasında görünüyordu.','Ancak bu, Voldemort\'un olağanüstü bir güce ulaştığı ilk an değildi. 1981\'deki ilk yenilgisinin ardından örgüt fiilen çökmüştü. Pek çok Death Eater dahliyet etmediğini iddia etti, bir kısmı Azkaban\'a gönderildi, hiçbir halef hareketi sürdürmek için ortaya çıkmadı. Örgüt yalnızca Voldemort\'un kendisi geri döndüğünde hayatta kaldı.'],
+    background: ['Sihir Bakanlığı ya da Hogwarts\'ın aksine, Death Eaters resmi bir kurumsal yapıyla işlemiyor gibiydi. Hiçbir resmi hiyerarşi kamuoyuyla paylaşılmamış, Voldemort\'tan bağımsız bir yönetim kurulu oluşturulmamış ve hiçbir halef belirlenmemişti. Örgütün otoritesi, meşruiyeti ve stratejik yönelimi tek bir kişiye sıkı sıkıya bağlıydı.','Birkaç üst düzey isim etkiye sahipti. Lucius Malfoy serveti ve siyasi bağlantıları kontrol ediyordu. Bellatrix Lestrange olağanüstü bir sadakat komuta ediyordu. Severus Snape kritik bir istihbarat rolü üstlenmişti. Yaxley ise Bakanlık\'ın ele geçirilmesinin ardından denetimini yürütmeye yardım ediyordu. Tüm bu etkilerine karşın, hiçbirinin Voldemort\'un onayından bağımsız olarak otorite kullanabildiği görünmüyordu.','Örgütün en önemli kararları tek bir bireyde yoğunlaşmıştı.'],
+    evidence: ['Voldemort 1981\'de Harry Potter\'ı öldürmeye çalışırken ortadan kaybolduğunda, Death Eaters yeni bir liderliğe geçiş yapmadı. Parçalandılar. Bir kısım üye Imperius Laneti altında hareket ettiğini öne sürdü. Bir kısmı Azkaban\'a gönderildi. Diğerleri sıradan büyücü toplumuna döndü ve bekledi.','Voldemort geri döndüğünde örgüt onun etrafında yeniden bir araya geldi. Dönüşü, yön duygusunu, özgüveni ve hiyerarşiyi yeniden tesis etti. Yokluğu sırasında işlevsiz kalan aynı yapı, o mevcut olduğu anda yeniden güçlendi.','Voldemort Hogwarts Savaşı sırasında hayatını kaybettiğinde, örgüt bağımsız bir kurum olarak varlığını sürdürmeyi yine başaramadı. Bellatrix Lestrange savaş sırasında öldürüldü. Snape çoktan hayatını kaybetmişti. Hayatta kalan pek çok Death Eater yakalandı, hapsedildi ya da kaçtı. Hiçbir yedek liderlik yapısı ortaya çıkmadı.'],
+    numbers: [['Kurucu','Lord Voldemort',false],['Resmi halef','Yok',true],['Yönetim kurulu','Yok',true],['İkinci komutan','Kamuoyuna açıklanmamış',true],['Liderlik geçiş planı','Bilinmiyor',true],['1981 — kurucunun kayboluşu','Örgüt parçalandı',true],['Kurucunun dönüşü','Örgüt yeniden toplandı',false],['1998 — kurucunun ölümü','Örgüt çöktü',true]],
+    tension: ['Voldemort\'un merkezileşmiş liderliği, Death Eaters\'a hız, korku, uyum ve stratejik odak sağladı. Aynı zamanda örgütü kırılgan kıldı. Grubu o mevcut olduğunda etkili kılan güç yoğunlaşmasının kendisi, örgütün yokluğunda ayakta kalamamasının da sebebi oldu.','Vaka yalnızca Voldemort\'un ne denli güçlü olduğuyla ilgili değil. Tek bir kişide yoğunlaşan gücün bir kuruma dönüşüp dönüşemeyeceğiyle ilgili.'],
+    discussion: ['Bir örgüt kurucusundan sonra yaşayamıyorsa, hiç kurum olmuş mudur?','Death Eaters, Voldemort\'un kayboluşunun ardından iki kez çöktü. Bu, örgütsel tasarım başarısızlığını mı temsil ediyor; yoksa örgütün tam da tasarlandığı şekilde işlediğinin kanıtı mı?','Hangi sonuç daha önemlidir: örgütü korumak mı, yoksa misyonu gerçekleştirmek mi?','Merkezileşme aynı zamanda başarısının sebebiyse, yüksek derecede merkezileşmiş bir örgüt iyi tasarlanmış sayılabilir mi?'],
+    think: ['Önce bu vakadaki başarının ne anlama geldiğini tanımlayın. Başarılı bir Death Eater örgütü, Voldemort\'tan sonra ayakta kalan mı; yoksa o hayattayken iradesini yerine getiren mi?','Şimdi dengeye bakın. Voldemort\'un merkezileşmiş otoritesi örgütü daha hızlı, daha korkulur ve daha uyumlu kıldı. Aynı zamanda kırılgan kıldı. Bu dengenin hangi tarafı daha önemli?','Son olarak, vakayı başka bir yere uygulayın. Tek bir kişiye güçlü biçimde bağlı olan bir kurucu liderli şirketi, siyasi hareketi, yaratıcı ekibi ya da kurumu düşünün. Bu bağımlılık bir güç mü, bir zayıflık mı, yoksa ikisi birden mi?'],
+    lens: ['Bu vaka, kurucu bağımlılığı, halef riski, kurumsallaşma ve misyon odaklı örgütler merceklerinden okunabilir. Death Eaters, Voldemort mevcut olduğunda güçlü görünür; ancak kayboluşunun ardından tekrarlayan çöküşleri daha derin bir soruyu gündeme taşır: bir grup ne zaman kurum haline gelir, ne zaman tek bir kişinin iradesinin uzantısı olarak kalır?','İkinci bir mercek örgütsel sürdürülebilirliktir. Her örgüt kalıcı olmak zorunda değildir. Bazıları bir misyonu gerçekleştirmek, gücü yoğunlaştırmak ya da bir kurucunun stratejik hedefine hizmet etmek için inşa edilir. Death Eaters, okuyucuyu kurucudan sonra hayatta kalmanın her zaman örgütsel başarının testi olarak değerlendirilip değerlendirilmemesi gerektiğini sorgulamaya zorlar.'],
+    role: '1997 yılında bağımsız bir örgütsel danışmansın. Voldemort sana tek bir öneri hakkı tanıdı. Ne önerirsin?',
+    choices: ['Resmi bir ikinci komutan ata — Bellatrix veya Lucius — ve bu pozisyonu örgüte duyur.','İç hiyerarşiyi kurumsal yapıya dönüştür: siyasi, askeri, istihbarat alanlarının her birinin bağımsız liderliği olsun.','Hiçbir şey önerme. Örgütün kurumsal hale gelmesi Voldemort\'un çıkarına aykırı — merkezi güç bilinçli bir tasarım.','Sistematik bir ideoloji aktarım yapısı kur — örgüt fikir üzerinden yaşasın, kişi üzerinden değil.'],
+    decision: [
+      { for_arg: 'Resmi bir halef, kurucu ortadan kalktığında örgütün dağılmasını geciktirir. Bir geçiş figürü sadece hiyerarşiyi değil, üyelerin psikolojik bağlılığını da ayakta tutar.', against_arg: 'Güçlü bir ikinci isim, kurucuya rakip haline gelebilir. Karizmatik liderliğe dayanan örgütlerde resmi halef zamanla bağımsız bir güç merkezi oluşturur.', condition: 'Bu karar işe yarar eğer örgütün sürekliliği, kurucunun kişisel kontrolünden daha öncelikli bir hedefse. İkisi aynı anda mümkün olmayabilir.', apply: { new: 'Parçası olduğun bir ekibi düşün. Onu yöneten kişi yarın ortadan kaybolsa ne olurdu? Yerine geçecek biri var mı?', mid: 'Şu an ekibinde net bir ikinci var mı? Üç ay boyunca ayrılsaydın, işleri kim ayakta tutardı?', senior: 'Yönettiğin örgütte işleyen şeylerin ne kadarı tek bir kişinin varlığına bağlı? Bu yoğunlaşma bilinçli bir tercih mi?' } },
+      { for_arg: 'Fonksiyonel bağımsızlık, kurucu olmadan da operasyonel sürekliliği sağlar. Her alan kendi kararlarını alabildiğinde örgüt tek bir noktanın çökmesiyle felç olmaz.', against_arg: 'Bölünmüş otorite koordinasyon maliyetini artırır. Güçlü merkezi vizyona dayanan örgütlerde "kimin kararı geçerli" sorusu parçalanmayı başlatır.', condition: 'Bu karar işe yarar eğer örgütün misyonu liderden bağımsız tanımlanabiliyorsa.', apply: { new: 'Yakından tanıdığın bir ekipte kararlar tek kişiden mi geçiyor, yoksa dağılmış mı? Merkezdeki kişi erişilemez olduğunda ne oluyor?', mid: 'Ekibinin çalışmasının ne kadarı kararlar için senin varlığına bağlı?', senior: 'Yarın örgütündeki karar alma yetkisini her alana dağıtsan — ilk ne kırılırdı ve neden?' } },
+      { for_arg: 'Merkezi kontrol hız, sadakat ve odak sağlar. Her örgüt kurumsal olmak zorunda değil; bazıları bir amacı gerçekleştirmek için vardır.', against_arg: 'Kurucuya mutlak bağımlılık tek bir başarısızlık noktası yaratır. Kurucu devre dışı kaldığında örgütün tüm birikimine erişim kesilir.', condition: 'Bu karar savunulabilir eğer örgütün ömrü kurucunun ömrüyle eşit tutuluyorsa.', apply: { new: 'Tamamen tek kişinin enerjisiyle yürüyen bir örgütte bulundun mu? O kişi ayrıldığında ne oldu?', mid: 'Ekibinin şu anki çalışma biçimi sensiz sürdürülebilir mi?', senior: 'Örgütün gerçekte ne için tasarlanmış — süreklilik için mi, icra için mi?' } },
+      { for_arg: 'İdeoloji kurucudan bağımsız yaşayabilir. Sistematik eğitimle aktarılan bir fikir sistemi, karizmatik lider olmadan da örgütü bir arada tutar.', against_arg: 'Eğitim sistemi yalnızca fikirler gerçekten paylaşılıyorsa işe yarar. Katılım korku üzerine kuruluysa aktarım yüzeysel kalır.', condition: 'Bu karar işe yarar eğer örgütün üyeleri gerçekten aynı fikri taşıyorsa. Death Eaters bir fikre mi inanıyordu, Voldemort\'a mı?', apply: { new: 'Tanıdığın bir ekipte insanlar işe mi bağlı, lidere mi, yoksa bir fikre mi?', mid: 'Ekibin neden yaptıklarını anlıyor mu — gerçek sebebi, sadece görevi değil?', senior: 'Örgütünde gerçek bir ortak inanç var mı, yoksa uyum çoğunlukla kimin başta olduğunun bir fonksiyonu mu?' } }
+    ]
+  }
+};
+
+// placeholder for cases 2-6
+for (let i = 2; i <= 6; i++) cases[i] = cases[1];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let currentLevel = 'mid';
+let chosen = null;
+
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+function goArchive() {
+  window.scrollTo({ top: 0 });
+  document.getElementById('page-case').classList.remove('active');
+  document.getElementById('page-archive').classList.add('active');
+  document.getElementById('nav-back').classList.remove('visible');
+  chosen = null;
+}
+
+function openCase(btn, caseNum, level) {
+  // mark selected level in archive
+  btn.closest('.ci-levels').querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+
+  currentLevel = level;
+  const c = cases[caseNum];
+
+  // update header
+  document.getElementById('ch-ghost-num').textContent = c.num;
+  document.getElementById('ch-tag').textContent = `Case #${c.num} · ${c.world} · ${c.tension}`;
+  document.getElementById('ch-title').textContent = c.title;
+  const levelLabels = { new: 'New professional', mid: 'Mid-level manager', senior: 'Senior leader' };
+  document.getElementById('ch-level-label').textContent = levelLabels[level];
+
+  // build content
+  document.getElementById('case-main-content').innerHTML = buildCaseHTML(c);
+
+  // switch pages
+  document.getElementById('page-archive').classList.remove('active');
+  document.getElementById('page-case').classList.add('active');
+  document.getElementById('nav-back').classList.add('visible');
+  window.scrollTo({ top: 0 });
+
+  // init sidebar scroll tracking
+  initSidebar();
+}
+
+function buildCaseHTML(c) {
+  const paras = arr => arr.map(p => `<p class="s-text">${p}</p>`).join('');
+  const nums = c.numbers.map(([k, v, bad]) => `<div class="num-row"><span class="num-key">${k}</span><span class="num-val${bad ? ' bad' : ''}">${v}</span></div>`).join('');
+  const questions = c.discussion.map((q, i) => `<li class="q-item"><span class="q-n">${i+1}</span><span class="q-text">${q}</span></li>`).join('');
+  const thinks = c.think.map(t => `<div class="think-item"><div class="think-dot"><div class="think-dot-inner"></div></div><p class="think-text">${t}</p></div>`).join('');
+  const lenses = c.lens.map(l => `<div class="lens-card"><p>${l}</p></div>`).join('');
+  const choiceBtns = c.choices.map((ch, i) => `<button class="choice-btn" onclick="selectChoice(${i})"><span class="choice-letter">${String.fromCharCode(65+i)}</span><span class="choice-text">${ch}</span></button>`).join('');
+
+  return `
+    <div class="case-section" id="scenario">
+      <div class="s-label">The Scenario</div>
+      ${paras(c.scenario)}
+    </div>
+    <div class="case-section" id="background">
+      <div class="s-label">The Background</div>
+      ${paras(c.background)}
+    </div>
+    <div class="case-section" id="evidence">
+      <div class="s-label">The Evidence</div>
+      ${paras(c.evidence)}
+    </div>
+    <div class="case-section" id="numbers">
+      <div class="s-label">The Numbers</div>
+      <div class="num-rows">${nums}</div>
+    </div>
+    <div class="case-section" id="tension">
+      <div class="s-label">The Business Tension</div>
+      ${paras(c.tension)}
+    </div>
+    <div class="case-section" id="discussion">
+      <div class="s-label">For Group Discussion</div>
+      <ol class="q-list">${questions}</ol>
+    </div>
+    <div class="case-section" id="think">
+      <div class="s-label">Think It Through</div>
+      <div class="think-list">${thinks}</div>
+    </div>
+    <div class="case-section" id="lens">
+      <div class="s-label">Learning Lens</div>
+      <div class="lens-grid">${lenses}</div>
+    </div>
+    <div class="case-section" id="decision">
+      <div class="s-label">Your Decision</div>
+      <div class="role-strip">
+        <span class="role-strip-label">Rolün</span>
+        <p>"${c.role}"</p>
+      </div>
+      <div class="choices" id="choices">${choiceBtns}</div>
+    </div>
+    <div class="step" id="step-reason">
+      <div class="step-divider"><span>Neden?</span></div>
+      <span class="reason-label">Bu kararı verdin. Tek cümleyle neden?</span>
+      <textarea class="reason-textarea" id="reason-input" placeholder="Argümanını yaz..."></textarea>
+      <button class="action-btn" id="continue-btn" onclick="showArguments()">Devam →</button>
+    </div>
+    <div class="step" id="step-args">
+      <div class="step-divider"><span>Her iki taraf</span></div>
+      <div class="arg-cols">
+        <div class="arg-col">
+          <div class="arg-col-label">Savunan argüman</div>
+          <p id="arg-for"></p>
+        </div>
+        <div class="arg-col">
+          <div class="arg-col-label">Karşı argüman</div>
+          <p id="arg-against"></p>
+        </div>
+      </div>
+      <div class="condition-strip">
+        <span class="condition-strip-label">Hangi koşulda doğru olurdu</span>
+        <p id="arg-condition"></p>
+      </div>
+    </div>
+    <div class="step" id="step-apply">
+      <div class="step-divider"><span>Şimdi sen</span></div>
+      <div class="apply-wrap">
+        <p class="apply-question" id="apply-question"></p>
+        <textarea class="apply-textarea" id="apply-input" placeholder="Düşün ve yaz..."></textarea>
+        <button class="finish-btn" onclick="finish()">Bitti →</button>
+      </div>
+    </div>
+    <div class="done-box" id="done-box">
+      <p class="done-quote">"Kurgu dünyası giriş noktasıdır.<br>İş gerilimi asıl konudur."</p>
+      <span class="done-link" onclick="goArchive()">Arşive dön →</span>
+    </div>
+  `;
+}
+
+// ─── CASE INTERACTION ────────────────────────────────────────────────────────
+let currentCaseNum = 1;
+
+function selectChoice(i) {
+  if (chosen !== null) return;
+  chosen = i;
+  document.querySelectorAll('.choice-btn').forEach((b, idx) => {
+    b.classList.add(idx === i ? 'selected' : 'dimmed');
+    b.style.pointerEvents = 'none';
+  });
+  const step = document.getElementById('step-reason');
+  step.classList.add('visible');
+  setTimeout(() => step.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function showArguments() {
+  const input = document.getElementById('reason-input');
+  if (!input.value.trim()) return;
+  input.disabled = true;
+  document.getElementById('continue-btn').disabled = true;
+
+  const c = cases[currentCaseNum];
+  const d = c.decision[chosen];
+  document.getElementById('arg-for').textContent = d.for_arg;
+  document.getElementById('arg-against').textContent = d.against_arg;
+  document.getElementById('arg-condition').textContent = d.condition;
+  document.getElementById('apply-question').textContent = d.apply[currentLevel];
+
+  document.getElementById('step-args').classList.add('visible');
+  document.getElementById('step-apply').classList.add('visible');
+  setTimeout(() => document.getElementById('step-args').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function finish() {
+  const input = document.getElementById('apply-input');
+  if (!input.value.trim()) return;
+  input.disabled = true;
+  document.querySelector('.finish-btn').disabled = true;
+  const done = document.getElementById('done-box');
+  done.classList.add('visible');
+  setTimeout(() => done.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+function initSidebar() {
+  setTimeout(() => {
+    const sections = document.querySelectorAll('.case-section');
+    const links = document.querySelectorAll('.sidebar-link');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+      links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+    });
+  }, 100);
+}
+
+// ─── FILTERS ─────────────────────────────────────────────────────────────────
+let activeWorld = 'all', activeTension = 'all', activeCategory = 'all';
+
+function toggleDd(id) {
+  const dd = document.getElementById(id);
+  const isOpen = dd.classList.contains('open');
+  document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+  if (!isOpen) dd.classList.add('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.dropdown')) document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
+});
+
+function filter() {
+  const items = document.querySelectorAll('.case-item');
+  let visible = 0;
+  items.forEach(item => {
+    const show = (activeWorld === 'all' || item.dataset.world === activeWorld) &&
+                 (activeTension === 'all' || item.dataset.tension === activeTension) &&
+                 (activeCategory === 'all' || item.dataset.category === activeCategory);
+    item.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  document.getElementById('filter-count').textContent = visible + ' case' + (visible !== 1 ? 's' : '');
+  document.getElementById('empty').style.display = visible === 0 ? 'block' : 'none';
+}
+
+document.querySelectorAll('.dd-menu [data-world]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dd-menu [data-world]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeWorld = btn.dataset.world;
+    document.getElementById('dd-world-label').textContent = btn.textContent.trim() === 'All worlds' ? 'All' : btn.textContent.trim();
+    document.getElementById('dd-world').classList.remove('open');
+    filter();
+  });
+});
+
+document.querySelectorAll('.dd-menu [data-tension]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dd-menu [data-tension]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTension = btn.dataset.tension;
+    document.getElementById('dd-tension-label').textContent = btn.textContent.trim() === 'All tensions' ? 'All' : btn.textContent.trim();
+    document.getElementById('dd-tension').classList.remove('open');
+    filter();
+  });
+});
+
+document.querySelectorAll('.dd-menu [data-category]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.dd-menu [data-category]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCategory = btn.dataset.category;
+    document.getElementById('dd-category-label').textContent = btn.textContent.trim() === 'All categories' ? 'All' : btn.textContent.trim();
+    document.getElementById('dd-category').classList.remove('open');
+    filter();
+  });
+});
+
+// update currentCaseNum when opening
+const _origOpen = openCase;
+window.openCase = function(btn, num, level) {
+  currentCaseNum = num;
+  chosen = null;
+  _origOpen(btn, num, level);
+};
+</script>
+</body>
+</html>
