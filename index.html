@@ -61,6 +61,15 @@
   .nav-back:hover { color: var(--ink); }
   .nav-back.visible { display: block; }
 
+  .nav-sandbox {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.04em;
+    color: var(--muted); text-decoration: none;
+    border: 1px solid var(--border); border-radius: 5px;
+    padding: 6px 14px; transition: all 0.15s;
+  }
+  .nav-sandbox:hover { color: var(--blue); border-color: var(--blue); }
+
   /* ─── ARCHIVE PAGE ───────────────────────── */
   .hero {
     background: var(--ink);
@@ -461,7 +470,10 @@
 <!-- Nav -->
 <nav>
   <span class="nav-logo">Geekonomist</span>
-  <span class="nav-back" id="nav-back" onclick="goArchive()">← Archive</span>
+  <div style="display:flex;align-items:center;gap:20px">
+    <span class="nav-back" id="nav-back" onclick="goArchive()">← Archive</span>
+    <a href="sandbox.html" class="nav-sandbox">Analytics Sandbox →</a>
+  </div>
 </nav>
 
 <!-- ══════════════════════════════════════════
