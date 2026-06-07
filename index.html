@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Geekonomist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700;1,9..144,900&family=Figtree:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -25,7 +25,7 @@
   body {
     background: var(--bg);
     color: var(--ink);
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-weight: 300;
     overflow-x: hidden;
   }
@@ -45,13 +45,25 @@
   }
 
   .nav-logo {
-    font-family: 'Playfair Display', serif;
     font-size: 20px; font-weight: 700;
     color: var(--ink); text-decoration: none;
+    display: inline-flex; align-items: baseline; gap: 0;
+  }
+  .nav-logo .logo-geek {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--blue);
+    font-weight: 700;
+  }
+  .nav-logo .logo-onomist {
+    font-family: 'Fraunces', serif;
+    font-style: normal;
+    color: var(--ink);
+    font-weight: 700;
   }
 
   .nav-back {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif;
     font-size: 10px; letter-spacing: 0.04em;
     color: var(--muted); text-decoration: none;
     cursor: pointer; transition: color 0.2s;
@@ -83,14 +95,15 @@
   }
 
   .hero-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: clamp(52px, 8vw, 120px);
     font-weight: 900; line-height: 0.9; letter-spacing: -4px;
     color: var(--cream); position: relative; z-index: 1;
     opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
   }
 
-  .hero-title em { font-style: italic; color: var(--pink); }
+  .hero-title .logo-geek { font-style: italic; color: var(--soft); }
+  .hero-title .logo-onomist { font-style: normal; color: var(--cream); }
 
   .filters {
     padding: 20px 52px;
@@ -101,8 +114,8 @@
   }
 
   .filter-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; letter-spacing: 0.04em;
+    font-family: 'Figtree', sans-serif;
+    font-size: 10px; letter-spacing: 0.04em; font-weight: 500;
     color: var(--muted); flex-shrink: 0;
   }
 
@@ -113,8 +126,8 @@
     padding: 7px 14px;
     background: transparent; border: 1px solid var(--border);
     border-radius: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; letter-spacing: 0.04em;
+    font-family: 'Figtree', sans-serif;
+    font-size: 10px; letter-spacing: 0.04em; font-weight: 400;
     color: var(--ink); cursor: pointer; transition: all 0.15s; white-space: nowrap;
   }
 
@@ -136,8 +149,8 @@
     display: block; width: 100%; text-align: left;
     padding: 10px 16px; background: transparent; border: none;
     border-bottom: 1px solid var(--border);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; letter-spacing: 0.04em;
+    font-family: 'Figtree', sans-serif;
+    font-size: 10px; letter-spacing: 0.04em; font-weight: 400;
     color: var(--muted); cursor: pointer; transition: all 0.15s;
   }
 
@@ -148,7 +161,7 @@
   .filter-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
 
   .filter-count {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif;
     font-size: 10px; letter-spacing: 0.04em;
     color: rgba(107,108,154,0.35); margin-left: auto;
   }
@@ -167,13 +180,13 @@
   .case-item.hidden { display: none; }
 
   .ci-num {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif; font-weight: 400;
     font-size: 11px; letter-spacing: 0.04em;
     color: var(--soft); transition: color 0.18s; align-self: center;
   }
 
   .ci-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: 20px; font-weight: 700;
     line-height: 1.25; letter-spacing: -0.3px;
   }
@@ -184,8 +197,8 @@
     padding: 6px 14px;
     border: 1px solid var(--border); border-radius: 6px;
     background: transparent;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px; letter-spacing: 0.04em;
+    font-family: 'Figtree', sans-serif;
+    font-size: 9px; letter-spacing: 0.04em; font-weight: 400;
     color: var(--muted); cursor: pointer; transition: all 0.15s; white-space: nowrap;
   }
 
@@ -194,7 +207,7 @@
 
   .archive-empty {
     padding: 80px 0;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif;
     font-size: 11px; letter-spacing: 0.04em;
     color: var(--muted); opacity: 0.4; display: none;
   }
@@ -210,7 +223,7 @@
 
   .ch-ghost-num {
     position: absolute; right: -20px; top: -40px;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: clamp(200px, 28vw, 400px);
     font-weight: 900; font-style: italic;
     color: transparent;
@@ -227,7 +240,7 @@
 
   .ch-tag {
     display: inline-flex; align-items: center; gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif; font-weight: 500;
     font-size: 9px; letter-spacing: 0.12em;
     color: var(--soft); margin-bottom: 20px;
     position: relative; z-index: 1;
@@ -236,7 +249,7 @@
   .ch-tag::before { content: ''; display: block; width: 24px; height: 1px; background: var(--blue); }
 
   .ch-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: clamp(28px, 4vw, 54px);
     font-weight: 900; line-height: 1.05; letter-spacing: -1.5px;
     color: var(--cream); max-width: 740px;
@@ -245,7 +258,7 @@
 
   .ch-level-pill {
     display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 32px; font-family: 'IBM Plex Mono', monospace;
+    margin-top: 32px; font-family: 'Figtree', sans-serif; font-weight: 400;
     font-size: 9px; letter-spacing: 0.08em;
     color: rgba(171,171,213,0.5);
     position: relative; z-index: 1;
@@ -266,14 +279,14 @@
   }
 
   .sidebar-title {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif; font-weight: 600;
     font-size: 9px; letter-spacing: 0.14em;
     color: var(--soft); margin-bottom: 20px; display: block;
   }
 
   .sidebar-link {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; letter-spacing: 0.02em;
+    font-family: 'Figtree', sans-serif;
+    font-size: 10px; letter-spacing: 0.01em;
     color: var(--muted); text-decoration: none;
     padding: 7px 10px 7px 12px;
     border-left: 2px solid transparent;
@@ -288,7 +301,7 @@
   .case-section { margin-bottom: 72px; scroll-margin-top: 96px; }
 
   .s-label {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'Figtree', sans-serif; font-weight: 600;
     font-size: 9px; letter-spacing: 0.18em;
     color: var(--blue); display: flex; align-items: center; gap: 10px;
     margin-bottom: 20px;
@@ -297,7 +310,7 @@
   .s-label::after { content: ''; display: block; flex: 1; height: 1px; background: var(--border); }
 
   .s-text {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Figtree', sans-serif;
     font-size: 15px; line-height: 1.85; font-weight: 300; color: var(--ink);
   }
 
@@ -318,13 +331,13 @@
   .num-row:last-child { border-bottom: none; }
 
   .num-key {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px; letter-spacing: 0.08em; color: var(--soft);
+    font-family: 'Figtree', sans-serif;
+    font-size: 10px; letter-spacing: 0.04em; font-weight: 400; color: var(--soft);
     min-width: 200px; flex-shrink: 0;
   }
 
-  .num-val { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 300; color: var(--ink); }
-  .num-val.bad { color: var(--pink); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+  .num-val { font-family: 'Figtree', sans-serif; font-size: 14px; font-weight: 300; color: var(--ink); }
+  .num-val.bad { color: var(--pink); font-family: 'Figtree', sans-serif; font-size: 13px; font-weight: 500; }
 
   .q-list { list-style: none; }
 
@@ -332,12 +345,12 @@
   .q-item:last-child { border-bottom: none; }
 
   .q-n {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: 28px; font-weight: 900; font-style: italic;
     color: rgba(113,116,180,0.2); line-height: 1.2; margin-top: -2px;
   }
 
-  .q-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--ink); padding-top: 4px; }
+  .q-text { font-family: 'Figtree', sans-serif; font-size: 15px; line-height: 1.75; font-weight: 300; color: var(--ink); padding-top: 4px; }
 
   .think-list { display: flex; flex-direction: column; gap: 0; position: relative; }
   .think-list::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 12px; width: 1px; background: var(--border); }
@@ -347,12 +360,12 @@
   .think-dot { width: 19px; height: 19px; border-radius: 50%; border: 1.5px solid var(--blue); background: var(--bg); flex-shrink: 0; margin-top: 2px; position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; }
   .think-dot-inner { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
 
-  .think-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.8; font-weight: 300; color: var(--ink); }
+  .think-text { font-family: 'Figtree', sans-serif; font-size: 14px; line-height: 1.8; font-weight: 300; color: var(--ink); }
 
   .lens-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
   .lens-card { padding: 24px; background: rgba(113,116,180,0.04); border-top: 2px solid var(--blue); border-radius: 0 0 10px 10px; }
-  .lens-card p { font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; line-height: 1.8; font-weight: 300; color: var(--ink); }
+  .lens-card p { font-family: 'Figtree', sans-serif; font-size: 13px; line-height: 1.8; font-weight: 300; color: var(--ink); }
 
   .role-strip {
     background: var(--ink); padding: 24px 28px;
@@ -360,8 +373,8 @@
     margin-bottom: 20px; border-radius: 12px;
   }
 
-  .role-strip-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--soft); flex-shrink: 0; margin-top: 3px; opacity: 0.6; }
-  .role-strip p { font-family: 'Playfair Display', serif; font-size: 17px; font-style: italic; line-height: 1.55; color: var(--cream); }
+  .role-strip-label { font-family: 'Figtree', sans-serif; font-weight: 500; font-size: 9px; letter-spacing: 0.1em; color: var(--soft); flex-shrink: 0; margin-top: 3px; opacity: 0.6; }
+  .role-strip p { font-family: 'Fraunces', serif; font-size: 17px; font-style: italic; line-height: 1.55; color: var(--cream); }
 
   .choices { display: flex; flex-direction: column; gap: 6px; }
 
@@ -382,57 +395,57 @@
   .choice-btn.selected .choice-text { color: var(--cream); }
   .choice-btn.dimmed { opacity: 0.18; pointer-events: none; }
 
-  .choice-letter { font-family: 'Playfair Display', serif; font-size: 18px; font-style: italic; font-weight: 700; color: rgba(113,116,180,0.4); flex-shrink: 0; line-height: 1; margin-top: 1px; transition: color 0.15s; }
-  .choice-text { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.65; font-weight: 300; color: var(--ink); position: relative; z-index: 1; }
+  .choice-letter { font-family: 'Fraunces', serif; font-size: 18px; font-style: italic; font-weight: 700; color: rgba(113,116,180,0.4); flex-shrink: 0; line-height: 1; margin-top: 1px; transition: color 0.15s; }
+  .choice-text { font-family: 'Figtree', sans-serif; font-size: 14px; line-height: 1.65; font-weight: 300; color: var(--ink); position: relative; z-index: 1; }
 
   .step { display: none; }
   .step.visible { display: block; animation: fadeUp 0.35s ease forwards; }
 
   .step-divider { display: flex; align-items: center; gap: 16px; margin: 40px 0; }
   .step-divider::before, .step-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .step-divider span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--soft); }
+  .step-divider span { font-family: 'Figtree', sans-serif; font-weight: 500; font-size: 9px; letter-spacing: 0.12em; color: var(--soft); }
 
-  .reason-label { font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.6; font-weight: 300; color: var(--muted); margin-bottom: 14px; display: block; font-style: italic; }
+  .reason-label { font-family: 'Figtree', sans-serif; font-size: 15px; line-height: 1.6; font-weight: 300; color: var(--muted); margin-bottom: 14px; display: block; font-style: italic; }
 
-  .reason-textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.7; font-weight: 300; padding: 12px 0; resize: none; min-height: 72px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .reason-textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'Figtree', sans-serif; font-size: 15px; line-height: 1.7; font-weight: 300; padding: 12px 0; resize: none; min-height: 72px; color: var(--ink); outline: none; transition: border-color 0.15s; }
   .reason-textarea:focus { border-bottom-color: var(--blue); }
   .reason-textarea::placeholder { color: rgba(107,108,154,0.35); }
   .reason-textarea:disabled { opacity: 0.4; }
 
-  .action-btn { margin-top: 16px; padding: 9px 22px; background: transparent; border: 1px solid var(--blue); border-radius: 6px; color: var(--blue); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; }
+  .action-btn { margin-top: 16px; padding: 9px 22px; background: transparent; border: 1px solid var(--blue); border-radius: 6px; color: var(--blue); font-family: 'Figtree', sans-serif; font-weight: 500; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; }
   .action-btn:hover { background: var(--blue); color: white; }
   .action-btn:disabled { opacity: 0.25; cursor: default; }
 
   .arg-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 24px; }
 
-  .arg-col-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .arg-col-label { font-family: 'Figtree', sans-serif; font-weight: 500; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
   .arg-col-label::before { content: ''; display: block; width: 12px; height: 1.5px; }
   .arg-cols .arg-col:first-child .arg-col-label::before { background: #7a9e87; }
   .arg-cols .arg-col:last-child .arg-col-label::before { background: var(--pink); }
-  .arg-col p { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.75; font-weight: 300; color: var(--ink); }
+  .arg-col p { font-family: 'Figtree', sans-serif; font-size: 14px; line-height: 1.75; font-weight: 300; color: var(--ink); }
 
   .condition-strip { padding: 16px 0; border-top: 1px solid var(--border); }
-  .condition-strip-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; display: block; }
-  .condition-strip p { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.75; font-weight: 300; color: var(--muted); }
+  .condition-strip-label { font-family: 'Figtree', sans-serif; font-weight: 500; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; display: block; }
+  .condition-strip p { font-family: 'Figtree', sans-serif; font-size: 14px; line-height: 1.75; font-weight: 300; color: var(--muted); }
 
   .apply-wrap { margin-top: 8px; }
-  .apply-question { font-family: 'Playfair Display', serif; font-size: 20px; font-style: italic; font-weight: 700; line-height: 1.45; color: var(--blue); margin-bottom: 20px; }
+  .apply-question { font-family: 'Fraunces', serif; font-size: 20px; font-style: italic; font-weight: 700; line-height: 1.45; color: var(--blue); margin-bottom: 20px; }
 
-  .apply-textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.7; font-weight: 300; padding: 12px 0; resize: none; min-height: 72px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .apply-textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'Figtree', sans-serif; font-size: 15px; line-height: 1.7; font-weight: 300; padding: 12px 0; resize: none; min-height: 72px; color: var(--ink); outline: none; transition: border-color 0.15s; }
   .apply-textarea:focus { border-bottom-color: var(--blue); }
   .apply-textarea::placeholder { color: rgba(107,108,154,0.3); }
   .apply-textarea:disabled { opacity: 0.4; }
 
-  .finish-btn { margin-top: 16px; padding: 9px 22px; background: transparent; border: 1px solid var(--pink); border-radius: 6px; color: var(--pink); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; }
+  .finish-btn { margin-top: 16px; padding: 9px 22px; background: transparent; border: 1px solid var(--pink); border-radius: 6px; color: var(--pink); font-family: 'Figtree', sans-serif; font-weight: 500; font-size: 10px; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; }
   .finish-btn:hover { background: var(--pink); color: var(--ink); }
   .finish-btn:disabled { opacity: 0.25; cursor: default; }
 
   .done-box { display: none; padding: 64px 0; text-align: center; }
   .done-box.visible { display: block; animation: fadeUp 0.4s ease forwards; }
 
-  .done-quote { font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic; font-weight: 700; color: var(--blue); line-height: 1.5; margin-bottom: 28px; }
+  .done-quote { font-family: 'Fraunces', serif; font-size: 22px; font-style: italic; font-weight: 700; color: var(--blue); line-height: 1.5; margin-bottom: 28px; }
 
-  .done-link { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; transition: all 0.2s; cursor: pointer; }
+  .done-link { font-family: 'Figtree', sans-serif; font-weight: 400; font-size: 10px; letter-spacing: 0.06em; color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; transition: all 0.2s; cursor: pointer; }
   .done-link:hover { color: var(--blue); border-color: var(--blue); }
 
   /* ─── FOOTER ─────────────────────────────── */
@@ -443,8 +456,10 @@
     display: flex; justify-content: space-between; align-items: center;
   }
 
-  .f-logo { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); }
-  .f-copy { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.04em; color: rgba(252,238,200,0.18); }
+  .f-logo { font-size: 18px; font-weight: 700; color: var(--cream); display: inline-flex; align-items: baseline; }
+  .f-logo .logo-geek { font-family: 'Fraunces', serif; font-style: italic; color: var(--soft); }
+  .f-logo .logo-onomist { font-family: 'Fraunces', serif; font-style: normal; color: var(--cream); }
+  .f-copy { font-family: 'Figtree', sans-serif; font-size: 10px; letter-spacing: 0.04em; color: rgba(252,238,200,0.18); }
 
   /* ─── PAGE TRANSITION ────────────────────── */
   .page { opacity: 1; transition: opacity 0.2s ease; }
@@ -460,7 +475,7 @@
 
 <!-- Nav -->
 <nav>
-  <span class="nav-logo">Geekonomist</span>
+  <span class="nav-logo"><span class="logo-geek">Geek</span><span class="logo-onomist">onomist</span></span>
   <span class="nav-back" id="nav-back" onclick="goArchive()">← Archive</span>
 </nav>
 
@@ -472,7 +487,7 @@
   <div class="hero">
     <div class="hero-glow-1"></div>
     <div class="hero-glow-2"></div>
-    <h1 class="hero-title">Geekonomist</h1>
+    <h1 class="hero-title"><span class="logo-geek">Geek</span><span class="logo-onomist">onomist</span></h1>
   </div>
 
   <div class="filters">
@@ -591,7 +606,7 @@
   </div>
 
   <footer>
-    <span class="f-logo">Geekonomist</span>
+    <span class="f-logo"><span class="logo-geek">Geek</span><span class="logo-onomist">onomist</span></span>
     <span class="f-copy">© 2025 Geekonomist</span>
   </footer>
 </div>
